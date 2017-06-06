@@ -45,6 +45,7 @@ function get_last_manifest_path($bucket_path, $report_prefix, $report_name)
 
 /**
  * Return all the reports file paths defined in the manifest file
+ * Paths point to compressed files
  * Return FALSE in case of error
  *
  * @param string $bucket_path   Folder path containing all the reports
@@ -81,6 +82,46 @@ function get_reports_paths($bucket_path, $manifest_path)
     );
 
     return $reports_paths;
+}
+
+/**
+ * Extract a gzip report to a target file
+ * Return FALSE in case of error
+ *
+ * @param string $report_path Path of the report to extract
+ * @param string $target_path Path of the file to extract to
+ *
+ * @return void|boolean
+ */
+function extract_gzip_report($report_path, $target_path)
+{
+    $report_handle = gzopen($report_path, 'rb');
+
+    if ($report_handle === FALSE) {
+        error_log("Can't open report file $report_path for reading");
+        return FALSE;
+    }
+
+    $target_handle = fopen($target_path, 'w');
+
+    if ($target_handle === FALSE) {
+        error_log("Can't open target file $target_path for writing");
+        return FALSE;
+    }
+
+    while (! gzeof($report_handle)) {
+        $write_result = fwrite($target_handle, gzread($report_handle, 4096));
+
+        if ($write_result === FALSE) {
+            gzclose($report_handle);
+            fclose($target_handle);
+            error_log("Failed to write some data to $target_path");
+            return FALSE;
+        }
+    }
+
+    gzclose($report_handle);
+    fclose($target_handle);
 }
 
 ?>

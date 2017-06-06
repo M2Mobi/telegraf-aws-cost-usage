@@ -37,4 +37,38 @@ function get_last_manifest_path($bucket_path, $report_prefix, $report_name) {
     return $last_manifest_path;
 }
 
+/**
+ * Return all the reports file paths defined in the manifest file
+ * Return FALSE in case of error
+ *
+ * @param string $bucket_path   Folder path containing all the reports
+ * @param string $manifest_path Manifest file path
+ *
+ * @return array|boolean
+ */
+function get_reports_paths($bucket_path, $manifest_path)
+{
+    $manifest_data = json_decode(
+        file_get_contents($manifest_path),
+        TRUE
+    );
+
+    if (is_null($manifest_data)) {
+        return FALSE;
+    }
+
+    if (! isset($manifest_data['reportKeys'])) {
+        return FALSE;
+    }
+
+    $reports_paths = array_map(
+        function ($relative_path) use ($bucket_path) {
+            return $bucket_path . DIRECTORY_SEPARATOR . $relative_path;
+        },
+        $manifest_data['reportKeys']
+    );
+
+    return $reports_paths;
+}
+
 ?>

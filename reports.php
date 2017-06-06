@@ -19,6 +19,7 @@ function get_last_manifest_path($bucket_path, $report_prefix, $report_name) {
     $monthly_folders = scandir($monthly_folders_path, SCANDIR_SORT_DESCENDING);
 
     if (empty($monthly_folders)) {
+        error_log("Can't find monthly folders in $monthly_folders_path");
         return FALSE;
     }
 
@@ -31,6 +32,7 @@ function get_last_manifest_path($bucket_path, $report_prefix, $report_name) {
     );
 
     if (! file_exists($last_manifest_path)) {
+        error_log("No manifest file found in $last_manifest_path");
         return FALSE;
     }
 
@@ -48,16 +50,22 @@ function get_last_manifest_path($bucket_path, $report_prefix, $report_name) {
  */
 function get_reports_paths($bucket_path, $manifest_path)
 {
-    $manifest_data = json_decode(
-        file_get_contents($manifest_path),
-        TRUE
-    );
+    $manifest_content = file_get_contents($manifest_path);
+
+    if ($manifest_content === FALSE) {
+        error_log("Can't read manifest file $manifest_path");
+        return FALSE;
+    }
+
+    $manifest_data = json_decode($manifest_content, TRUE);
 
     if (is_null($manifest_data)) {
+        error_log("Can't decode manifest file $manifest_path");
         return FALSE;
     }
 
     if (! isset($manifest_data['reportKeys'])) {
+        error_log("Missing reportKeys in manifest file $manifest_path");
         return FALSE;
     }
 

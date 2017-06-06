@@ -1,4 +1,7 @@
 <?php
+/**
+ * This file contains functions to retrieve reports files from a local bucket
+ */
 
 /**
  * Return the file path of the last manifest
@@ -10,7 +13,8 @@
  *
  * @return string|boolean
  */
-function get_last_manifest_path($bucket_path, $report_prefix, $report_name) {
+function get_last_manifest_path($bucket_path, $report_prefix, $report_name)
+{
     $monthly_folders_path = implode(
         DIRECTORY_SEPARATOR,
         [ $bucket_path, $report_prefix, $report_name ]

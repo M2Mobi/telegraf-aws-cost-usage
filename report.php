@@ -9,8 +9,6 @@
  *
  * @param string   $path     Report path (uncompressed)
  * @param callable $function Function to apply to each report line
- *                           first parameter is the line data (as array)
- *                           second parameter is the headers data (as array)
  *
  * @return void|boolean
  */
@@ -23,10 +21,10 @@ function parse_report($path, $function)
         return FALSE;
     }
 
-    $headers = array_flip(fgetcsv($handle));
+    $headers = fgetcsv($handle);
 
     while (($line_data = fgetcsv($handle)) !== FALSE) {
-        call_user_func($function, $line_data, $headers);
+        call_user_func($function, array_combine($headers, $line_data));
     }
 
     fclose($handle);
@@ -36,31 +34,30 @@ function parse_report($path, $function)
 /**
  * Output a report line using InfluxDB line format
  *
- * @param array $line    Report data of one line
- * @param array $headers Headers name to index mapping
+ * @param array $line Report data of one line
  *
  * @return void
  */
-function output_line_influxdb($line, $headers)
+function output_line_influxdb($line)
 {
     $measurement = 'aws_cost_usage';
 
-    $timestamp = strtotime($line[$headers['lineItem/UsageEndDate']]);
+    $timestamp = strtotime($line['lineItem/UsageEndDate']);
 
     $tags = [
-        'account_id'     => $line[$headers['lineItem/UsageAccountId']],
-        'product_code'   => $line[$headers['lineItem/ProductCode']],
-        'resource_id'    => $line[$headers['lineItem/ResourceId']],
-        'usage_type'     => $line[$headers['lineItem/UsageType']],
-        'operation'      => $line[$headers['lineItem/Operation']],
-        'transfer_type'  => $line[$headers['product/transferType']],
-        'product_family' => $line[$headers['product/productFamily']]
+        'account_id'     => $line['lineItem/UsageAccountId'],
+        'product_code'   => $line['lineItem/ProductCode'],
+        'resource_id'    => $line['lineItem/ResourceId'],
+        'usage_type'     => $line['lineItem/UsageType'],
+        'operation'      => $line['lineItem/Operation'],
+        'transfer_type'  => $line['product/transferType'],
+        'product_family' => $line['product/productFamily']
     ];
 
     $fields = [
-        'blended_cost'   => $line[$headers['lineItem/BlendedCost']],
-        'unblended_cost' => $line[$headers['lineItem/UnblendedCost']],
-        'usage_amount'   => $line[$headers['lineItem/UsageAmount']],
+        'blended_cost'   => $line['lineItem/BlendedCost'],
+        'unblended_cost' => $line['lineItem/UnblendedCost'],
+        'usage_amount'   => $line['lineItem/UsageAmount'],
     ];
 
     echo influxdb_point_format($measurement, $timestamp, $fields, $tags);

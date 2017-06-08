@@ -4,7 +4,45 @@
  */
 
 /**
- * Return the file path of the last manifest
+ * Return the file path of a manifest from a billing month
+ * Return FALSE in case of error or if the file cannot be found
+ *
+ * @param string $bucket_path   Folder path containing all the reports
+ * @param string $report_prefix Prefix assigned to the report
+ * @param string $report_name   Name assigned to the report
+ * @param string $billing_year  Billing year in the format YYYY
+ * @param string $billing_month Billing month in the format MM
+ *
+ * @return string|boolean
+ */
+function get_manifest_path($bucket_path, $report_prefix, $report_name, $billing_year, $billing_month)
+{
+    $month_folder_name_pattern = $billing_year . $billing_month . '*';
+    $manifest_filename         = $report_name . '-Manifest.json';
+
+    $manifest_path_pattern = implode(
+        DIRECTORY_SEPARATOR,
+        [
+            $bucket_path,
+            $report_prefix,
+            $report_name,
+            $month_folder_name_pattern,
+            $manifest_filename
+        ]
+    );
+
+    $search_result = glob($manifest_path_pattern);
+
+    if (empty($search_result)) {
+        error_log("No manifest file found matching pattern $manifest_path_pattern");
+        return FALSE;
+    }
+
+    return $search_result[0];
+}
+
+/**
+ * Return the manifest file path for the current billing month
  * Return FALSE in case of error or if the file cannot be found
  *
  * @param string $bucket_path   Folder path containing all the reports
@@ -13,34 +51,43 @@
  *
  * @return string|boolean
  */
-function get_last_manifest_path($bucket_path, $report_prefix, $report_name)
+function get_current_manifest_path($bucket_path, $report_prefix, $report_name)
 {
-    $monthly_folders_path = implode(
-        DIRECTORY_SEPARATOR,
-        [ $bucket_path, $report_prefix, $report_name ]
+    $current_year  = date('Y');
+    $current_month = date('m');
+
+    return get_manifest_path(
+        $bucket_path,
+        $report_prefix,
+        $report_name,
+        $current_year,
+        $current_month
     );
+}
 
-    $monthly_folders = scandir($monthly_folders_path, SCANDIR_SORT_DESCENDING);
+/**
+ * Return the manifest file path for the previous billing month
+ * Return FALSE in case of error or if the file cannot be found
+ *
+ * @param string $bucket_path   Folder path containing all the reports
+ * @param string $report_prefix Prefix assigned to the report
+ * @param string $report_name   Name assigned to the report
+ *
+ * @return string|boolean
+ */
+function get_previous_manifest_path($bucket_path, $report_prefix, $report_name)
+{
+    $previous_month_day   = strtotime('first day of previous month');
+    $previous_month_year  = date('Y', $previous_month_day);
+    $previous_month_month = date('m', $previous_month_day);
 
-    if (empty($monthly_folders)) {
-        error_log("Can't find monthly folders in $monthly_folders_path");
-        return FALSE;
-    }
-
-    $last_month_folder = $monthly_folders[0];
-    $manifest_filename = $report_name . '-Manifest.json';
-
-    $last_manifest_path = implode(
-        DIRECTORY_SEPARATOR,
-        [ $monthly_folders_path , $last_month_folder, $manifest_filename ]
+    return get_manifest_path(
+        $bucket_path,
+        $report_prefix,
+        $report_name,
+        $previous_month_year,
+        $previous_month_month
     );
-
-    if (! file_exists($last_manifest_path)) {
-        error_log("No manifest file found in $last_manifest_path");
-        return FALSE;
-    }
-
-    return $last_manifest_path;
 }
 
 /**

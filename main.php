@@ -9,7 +9,7 @@ $BUCKET_PATH   = '/mnt/s3';
 $REPORT_PREFIX = 'hourly';
 $REPORT_NAME   = 'hourly_report';
 
-$manifest_path = get_last_manifest_path(
+$manifest_path = get_current_manifest_path(
     $BUCKET_PATH,
     $REPORT_PREFIX,
     $REPORT_NAME

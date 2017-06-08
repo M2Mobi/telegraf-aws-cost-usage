@@ -1,7 +1,7 @@
 <?php
 
-include 'bucket.php';
-include 'report.php';
+include 'lib/bucket.php';
+include 'lib/report.php';
 include 'config.php';
 
 $manifest_path = get_current_manifest_path(

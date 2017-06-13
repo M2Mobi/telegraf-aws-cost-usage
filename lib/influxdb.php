@@ -19,11 +19,15 @@ function output_line_influxdb($line, $measurement)
         'item_id'           => $line['identity/LineItemId'],
         'account_id'        => $line['lineItem/UsageAccountId'],
         'product_code'      => $line['lineItem/ProductCode'],
-        'resource_id'       => $line['lineItem/ResourceId'],
         'usage_type'        => $line['lineItem/UsageType'],
         'operation'         => $line['lineItem/Operation'],
         'availability_zone' => $line['lineItem/AvailabilityZone']
     ];
+
+    // Optional field
+    if (array_key_exists('lineItem/ResourceId', $line)) {
+        $tags['resource_id'] = $line['lineItem/ResourceId'];
+    }
 
     $fields = [
         'blended_cost'   => $line['lineItem/BlendedCost'],

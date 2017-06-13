@@ -25,7 +25,12 @@ if ($reports_paths === FALSE) {
 
 foreach ($reports_paths as $report_path) {
     extract_gzip_report($report_path, $TMP_CSV);
-    parse_report($TMP_CSV, 'output_line_' . $OUTPUT_FORMAT, $MEASUREMENT);
+    parse_report(
+        $TMP_CSV,
+        'output_line_' . $OUTPUT_FORMAT,
+        $MEASUREMENT,
+        $FILTERS
+    );
 };
 
 unlink($TMP_CSV);

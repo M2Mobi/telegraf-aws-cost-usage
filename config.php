@@ -18,4 +18,10 @@ $REPORT_NAME = 'hourly_report';
 // Measurement name
 $MEASUREMENT = 'aws_cost_usage';
 
+// Filter the lines to use (header name => value)
+$FILTERS = [
+    'bill/PayerAccountId'     => '123456789',
+    'lineItem/UsageAccountId' => '1357924680'
+];
+
 ?>

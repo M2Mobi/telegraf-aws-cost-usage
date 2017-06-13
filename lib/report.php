@@ -10,10 +10,11 @@
  * @param string   $path        Report path (uncompressed)
  * @param callable $function    Function to apply to each report line
  * @param string   $measurement Measurement name
+ * @param array    $filters     Filters to select the lines to use
  *
  * @return void|boolean
  */
-function parse_report($path, $function, $measurement)
+function parse_report($path, $function, $measurement, $filters = [])
 {
     $handle = fopen($path, 'r');
 
@@ -25,16 +26,37 @@ function parse_report($path, $function, $measurement)
     $headers = fgetcsv($handle);
 
     while (($line_data = fgetcsv($handle)) !== FALSE) {
-        call_user_func(
-            $function,
-            array_combine($headers, $line_data),
-            $measurement
-        );
+        $line = array_combine($headers, $line_data);
+
+        if (! check_line_filters($line, $filters)) {
+            continue;
+        }
+
+        call_user_func($function, $line, $measurement);
     }
 
     fclose($handle);
 }
 
+/**
+ * Check a report line against the filters
+ * Return TRUE if the line should be used, FALSE otherwise
+ *
+ * @param array $line    Report data of one line
+ * @param array $filters Filters definition (header name => value)
+ *
+ * @return boolean
+ */
+function check_line_filters($line, $filters)
+{
+    foreach ($filters as $k => $v) {
+        if ($line[$k] != $v) {
+            return FALSE;
+        }
+    }
+
+    return TRUE;
+}
 
 /**
  * Output a report line using InfluxDB line format

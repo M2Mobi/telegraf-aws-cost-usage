@@ -7,13 +7,13 @@ $TMP_CSV = '/tmp/aws_cost_usage.csv';
 $OUTPUT_FORMAT = 'influxdb';
 
 // Local path of the bucket containing all the reports
-$BUCKET_PATH = '/mnt/s3';
+$BUCKET_PATH = '/mnt/s3/aws-reports';
 
 // Prefix of the reports
-$REPORT_PREFIX = 'hourly';
+$REPORT_PREFIX = 'cost-usage';
 
 // Name of the reports
-$REPORT_NAME = 'hourly_report';
+$REPORT_NAME = 'hourly-report';
 
 // Measurement name
 $MEASUREMENT = 'aws_cost_usage';

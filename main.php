@@ -25,8 +25,8 @@ if (isset($options['m'])) {
 
 include $config_file;
 
-include 'lib/bucket.php';
 include 'lib/report.php';
+include "lib/${OUTPUT_FORMAT}.php";
 
 $manifest_path = call_user_func(
     "get_${target_month}_manifest_path",

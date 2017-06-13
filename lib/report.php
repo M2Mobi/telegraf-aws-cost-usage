@@ -49,8 +49,8 @@ function parse_report($path, $function, $measurement, $filters = [])
  */
 function check_line_filters($line, $filters)
 {
-    foreach ($filters as $k => $v) {
-        if ($line[$k] != $v) {
+    foreach ($filters as $key => $value) {
+        if ($line[$key] != $value) {
             return FALSE;
         }
     }
@@ -103,18 +103,18 @@ function influxdb_point_format($measurement, $timestamp, $fields, $tags =[])
 {
     $result = $measurement;
 
-    foreach ($tags as $k => $v) {
-        if ($v !== '') {
-            $result .= ",$k=" . str_replace(' ', '\ ', $v);
+    foreach ($tags as $key => $value) {
+        if ($value !== '') {
+            $result .= ",$key=" . str_replace(' ', '\ ', $value);
         }
     }
 
     $result .= ' ';
 
     $f = [];
-    foreach ($fields as $k => $v) {
-        if ($v !== '') {
-            $f[] = "$k=$v";
+    foreach ($fields as $key => $value) {
+        if ($value !== '') {
+            $f[] = "$key=$value";
         }
     }
     $result .= implode(',', $f);

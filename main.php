@@ -1,30 +1,12 @@
 <?php
 
-$options = getopt('c:m:');
+include 'lib/cli.php';
 
-if (! isset($options['c'])) {
-    error_log('Missing config file argument "-c file_path"');
+if (! get_cli_options($config_file, $target_month)) {
     exit(1);
-}
-
-$config_file = $options['c'];
-
-if (! file_exists($config_file)) {
-    error_log("Invalid config file path $config_file");
-    exit(1);
-}
-
-$target_month = 'current';
-if (isset($options['m'])) {
-    $target_month = $options['m'];
-    if (! in_array($target_month, [ 'current', 'previous' ])) {
-        error_log("Invalid target month $target_month, must be either 'current' or 'previous'");
-        exit(1);
-    }
 }
 
 include $config_file;
-
 include 'lib/report.php';
 include "lib/${OUTPUT_FORMAT}.php";
 

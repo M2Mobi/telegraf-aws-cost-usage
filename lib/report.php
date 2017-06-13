@@ -7,12 +7,13 @@
  * Parse a report file and apply a function on each data line
  * Return FALSE in case of error
  *
- * @param string   $path     Report path (uncompressed)
- * @param callable $function Function to apply to each report line
+ * @param string   $path        Report path (uncompressed)
+ * @param callable $function    Function to apply to each report line
+ * @param string   $measurement Measurement name
  *
  * @return void|boolean
  */
-function parse_report($path, $function)
+function parse_report($path, $function, $measurement)
 {
     $handle = fopen($path, 'r');
 
@@ -24,7 +25,11 @@ function parse_report($path, $function)
     $headers = fgetcsv($handle);
 
     while (($line_data = fgetcsv($handle)) !== FALSE) {
-        call_user_func($function, array_combine($headers, $line_data));
+        call_user_func(
+            $function,
+            array_combine($headers, $line_data),
+            $measurement
+        );
     }
 
     fclose($handle);
@@ -34,14 +39,13 @@ function parse_report($path, $function)
 /**
  * Output a report line using InfluxDB line format
  *
- * @param array $line Report data of one line
+ * @param array  $line        Report data of one line
+ * @param string $measurement Measurement name
  *
  * @return void
  */
-function output_line_influxdb($line)
+function output_line_influxdb($line, $measurement)
 {
-    $measurement = 'aws_cost_usage';
-
     $timestamp = strtotime($line['lineItem/UsageEndDate']);
 
     $tags = [

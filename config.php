@@ -15,4 +15,7 @@ $REPORT_PREFIX = 'hourly';
 // Name of the reports
 $REPORT_NAME = 'hourly_report';
 
+// Measurement name
+$MEASUREMENT = 'aws_cost_usage';
+
 ?>

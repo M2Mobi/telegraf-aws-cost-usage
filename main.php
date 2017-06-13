@@ -1,6 +1,6 @@
 <?php
 
-$options = getopt('c:');
+$options = getopt('c:m:');
 
 if (! isset($options['c'])) {
     error_log('Missing config file argument "-c file_path"');
@@ -14,12 +14,22 @@ if (! file_exists($config_file)) {
     exit;
 }
 
+$target_month = 'current';
+if (isset($options['m'])) {
+    $target_month = $options['m'];
+    if (! in_array($target_month, [ 'current', 'previous' ])) {
+        error_log("Invalid target month $target_month, must be either 'current' or 'previous'");
+        exit;
+    }
+}
+
 include $config_file;
 
 include 'lib/bucket.php';
 include 'lib/report.php';
 
-$manifest_path = get_current_manifest_path(
+$manifest_path = call_user_func(
+    "get_${target_month}_manifest_path",
     $BUCKET_PATH,
     $REPORT_PREFIX,
     $REPORT_NAME

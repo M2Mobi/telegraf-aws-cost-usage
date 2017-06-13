@@ -4,14 +4,14 @@ $options = getopt('c:m:');
 
 if (! isset($options['c'])) {
     error_log('Missing config file argument "-c file_path"');
-    exit;
+    exit(1);
 }
 
 $config_file = $options['c'];
 
 if (! file_exists($config_file)) {
     error_log("Invalid config file path $config_file");
-    exit;
+    exit(1);
 }
 
 $target_month = 'current';
@@ -19,7 +19,7 @@ if (isset($options['m'])) {
     $target_month = $options['m'];
     if (! in_array($target_month, [ 'current', 'previous' ])) {
         error_log("Invalid target month $target_month, must be either 'current' or 'previous'");
-        exit;
+        exit(1);
     }
 }
 
@@ -36,7 +36,7 @@ $manifest_path = call_user_func(
 );
 
 if ($manifest_path === FALSE) {
-    exit;
+    exit(1);
 }
 
 $reports_paths = get_reports_paths(
@@ -45,7 +45,7 @@ $reports_paths = get_reports_paths(
 );
 
 if ($reports_paths === FALSE) {
-    exit;
+    exit(1);
 }
 
 foreach ($reports_paths as $report_path) {

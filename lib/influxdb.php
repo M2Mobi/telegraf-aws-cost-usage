@@ -16,13 +16,13 @@ function output_line_influxdb($line, $measurement)
     $timestamp = strtotime($line['lineItem/UsageEndDate']);
 
     $tags = [
-        'account_id'     => $line['lineItem/UsageAccountId'],
-        'product_code'   => $line['lineItem/ProductCode'],
-        'resource_id'    => $line['lineItem/ResourceId'],
-        'usage_type'     => $line['lineItem/UsageType'],
-        'operation'      => $line['lineItem/Operation'],
-        'transfer_type'  => $line['product/transferType'],
-        'product_family' => $line['product/productFamily']
+        'item_id'           => $line['identity/LineItemId'],
+        'account_id'        => $line['lineItem/UsageAccountId'],
+        'product_code'      => $line['lineItem/ProductCode'],
+        'resource_id'       => $line['lineItem/ResourceId'],
+        'usage_type'        => $line['lineItem/UsageType'],
+        'operation'         => $line['lineItem/Operation'],
+        'availability_zone' => $line['lineItem/AvailabilityZone']
     ];
 
     $fields = [

@@ -23,6 +23,20 @@ for example through [s3fs](https://github.com/s3fs-fuse/s3fs-fuse)
 
 Reports are expected to use GZIP compression
 
+## Usage
+```
+./extract_report.php -c CONFIG_FILE [-m TARGET_MONTH]
+
+Required option:
+    -c   CONFIG_FILE    define the config file to load
+                        must contain all variables as in the config_example.php
+
+Optional option:
+    -m   TARGET_MONTH   define the report month to extract
+                        value can be either 'current' or 'previous'
+                        default value is 'current'
+```
+
 ## Similar project
 
 - [awsbill2graphite](https://github.com/danslimmon/awsbill2graphite)  

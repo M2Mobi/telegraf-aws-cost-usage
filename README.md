@@ -23,6 +23,13 @@ for example through [s3fs](https://github.com/s3fs-fuse/s3fs-fuse)
 
 Reports are expected to use GZIP compression
 
+## Similar project
+
+- [awsbill2graphite](https://github.com/danslimmon/awsbill2graphite)  
+Using Python  
+Download reports from Amazon S3  
+Send different metrics directly to Graphite
+
 ## TODO
 
 - Use compression defined in Manifest file to decompress reports

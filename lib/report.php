@@ -34,7 +34,7 @@ function get_manifest_path($bucket_path, $report_prefix, $report_name, $billing_
     $search_result = glob($manifest_path_pattern);
 
     if (empty($search_result)) {
-        error_log("No manifest file found matching pattern $manifest_path_pattern");
+        log_error("No manifest file found matching pattern $manifest_path_pattern");
         return FALSE;
     }
 
@@ -105,19 +105,19 @@ function get_reports_paths($bucket_path, $manifest_path)
     $manifest_content = file_get_contents($manifest_path);
 
     if ($manifest_content === FALSE) {
-        error_log("Can't read manifest file $manifest_path");
+        log_error("Can't read manifest file $manifest_path");
         return FALSE;
     }
 
     $manifest_data = json_decode($manifest_content, TRUE);
 
     if (is_null($manifest_data)) {
-        error_log("Can't decode manifest file $manifest_path");
+        log_error("Can't decode manifest file $manifest_path");
         return FALSE;
     }
 
     if (! isset($manifest_data['reportKeys'])) {
-        error_log("Missing reportKeys in manifest file $manifest_path");
+        log_error("Missing reportKeys in manifest file $manifest_path");
         return FALSE;
     }
 
@@ -145,14 +145,14 @@ function extract_gzip_report($report_path, $target_path)
     $report_handle = gzopen($report_path, 'rb');
 
     if ($report_handle === FALSE) {
-        error_log("Can't open report file $report_path for reading");
+        log_error("Can't open report file $report_path for reading");
         return FALSE;
     }
 
     $target_handle = fopen($target_path, 'w');
 
     if ($target_handle === FALSE) {
-        error_log("Can't open target file $target_path for writing");
+        log_error("Can't open target file $target_path for writing");
         return FALSE;
     }
 
@@ -162,7 +162,7 @@ function extract_gzip_report($report_path, $target_path)
         if ($write_result === FALSE) {
             gzclose($report_handle);
             fclose($target_handle);
-            error_log("Failed to write some data to $target_path");
+            log_error("Failed to write some data to $target_path");
             return FALSE;
         }
     }
@@ -187,7 +187,7 @@ function parse_report($path, $function, $measurement, $filters = [])
     $handle = fopen($path, 'r');
 
     if ($handle === FALSE) {
-        error_log("Can't read report file $path");
+        log_error("Can't read report file $path");
         return FALSE;
     }
 

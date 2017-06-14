@@ -1,6 +1,6 @@
 <?php
 /**
- * This file contains functions related to cli options
+ * This file contains functions related to cli
  */
 
 /**
@@ -31,16 +31,30 @@ function get_cli_options(&$config_file, &$target_month)
 
     // validate option values
     if (! file_exists($config_file)) {
-        error_log("Invalid config file path $config_file");
+        log_error("Invalid config file path $config_file");
         return FALSE;
     }
 
     if (! in_array($target_month, [ 'current', 'previous' ])) {
-        error_log("Invalid target month $target_month, must be either 'current' or 'previous'");
+        log_error("Invalid target month $target_month, must be either 'current' or 'previous'");
         return FALSE;
     }
 
     return TRUE;
+}
+
+/**
+ * Log an error message
+ *
+ * @param string $message Error message
+ *
+ * @return void
+ */
+function log_error($message)
+{
+    $date = date('Y-m-d H:i:s');
+
+    error_log("[$date] $message");
 }
 
 ?>

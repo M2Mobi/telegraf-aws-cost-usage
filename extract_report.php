@@ -32,7 +32,12 @@ if ($reports_paths === FALSE) {
 }
 
 foreach ($reports_paths as $report_path) {
-    extract_gzip_report($report_path, $TMP_CSV);
+    $extract_result = extract_gzip_report($report_path, $TMP_CSV);
+
+    if ($extract_result === FALSE) {
+        continue;
+    }
+
     parse_report(
         $TMP_CSV,
         'output_line_' . $OUTPUT_FORMAT,
